@@ -54,7 +54,7 @@
             
             {{--  BOTÃO: ABRIR CAIXA --}}
             <a href="{{ route('admin.caixa') }}" class="text-xs bg-amber-500 hover:bg-amber-400 text-zinc-950 px-4 py-3 rounded-xl transition flex items-center justify-center gap-2 font-black uppercase tracking-wider shadow-lg shadow-amber-500/10">
-                <i class="la la-cash-register text-base"></i> ABRIR CAIXA
+                <i class="la la-cash-register text-base"></i> CAIXA
             </a>
 
         </div>
