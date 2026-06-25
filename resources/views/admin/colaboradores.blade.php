@@ -164,8 +164,14 @@
                                         </div>
                                         <div>
                                             <label class="text-[10px] uppercase text-zinc-500 font-bold block mb-1">Valor da Ação (R$)</label>
-                                            {{-- Mudado para type="text" para permitir a formatação da máscara de Real --}}
-                                            <input type="text" name="valor" id="valor_input_{{ $index }}" oninput="mascaraMoeda(this)" value="{{ number_format(max(0, $rep['comissao_receber']), 2, ',', '.') }}" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs font-mono text-emerald-400 font-bold outline-none">
+                                            <input type="text" 
+                                                name="valor" 
+                                                id="valor_input_{{ $index }}" 
+                                                oninput="mascaraMoeda(this)" 
+                                                value="{{ number_format(max(0, $rep['comissao_receber']), 2, ',', '.') }}" 
+                                                data-original="{{ max(0, $rep['comissao_receber']) }}"
+                                                readonly
+                                                class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-xs font-mono text-emerald-400 font-bold outline-none read-only:opacity-75 read-only:cursor-not-allowed">
                                         </div>
                                     </div>
 
@@ -424,15 +430,25 @@
             const select = document.getElementById(`tipo_pagamento_${index}`);
             const inputValor = document.getElementById(`valor_input_${index}`);
             
-            if (select.value === 'adiantamento') {
-                inputValor.value = '';
-                inputValor.placeholder = '0,00';
-            } else {
-                // Ao voltar para repasse, formata novamente o valor dinâmico para moeda
-                let valorFormatado = parseFloat(comissaoReceber);
-                if (valorFormatado < 0) valorFormatado = 0; // Se estiver devendo, o repasse padrão inicia em 0
+            if (select.value === 'repasse') {
+                // Se for Fechamento Geral: Recupera o valor padrão devido, formata e trava o campo
+                const valorOriginal = parseFloat(inputValor.getAttribute('data-original')) || 0;
                 
-                inputValor.value = valorFormatado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                inputValor.value = valorOriginal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                inputValor.readOnly = true;
+                
+                // Remove classes de edição se necessário e adiciona feedback visual de travado
+                inputValor.classList.add('text-emerald-400');
+                inputValor.classList.remove('text-zinc-300');
+            } else {
+                // Se for Adiantamento: Libera o campo para o usuário digitar e limpa o valor antigo
+                inputValor.value = '';
+                inputValor.readOnly = false;
+                inputValor.focus();
+                
+                // Altera a cor para indicar que é um campo digitável comum
+                inputValor.classList.remove('text-emerald-400');
+                inputValor.classList.add('text-zinc-300');
             }
         }
 
